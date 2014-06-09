@@ -18,6 +18,7 @@ class ViewController: UIViewController {
 			Ticket.getAllTickets {
 				tickets in
 				println("You should now have all tickets")
+				createOpenTicketList(fromTicketArray: tickets)
 			}
 		}
 		// Do any additional setup after loading the view, typically from a nib.

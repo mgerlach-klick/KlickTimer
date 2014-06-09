@@ -2,31 +2,10 @@
 
 import Foundation
 
-let kGenomeLoginURL = "https://genome.klick.com/home/"
-let kConnectionTestURL = "http://genome.klick.com/api/User/3438.json" //agoldstein
+var results : Array<Int> = [1,2,3]
 
-func testCookieValidity(callback: (Bool) -> Void) -> Void {
-	let session = NSURLSession.sharedSession()
+results.map{
+	num -> Int in
 	
-	let dataTask = session.dataTaskWithURL(NSURL.URLWithString(kConnectionTestURL), completionHandler:
-		{
-			data, urlresponse, error in
-			let httpResp = urlresponse as NSHTTPURLResponse
-			println(httpResp)
-			
-			if !error && httpResp.statusCode == 200 {
-				callback(true)
-			} else {
-				callback(false)
-			}
-		})
-	
-	dataTask.resume()
+	return num+1
 }
-
-testCookieValidity {
-	cookieIsValid in
-	cookieIsValid
-	println("Bookie is valid: \(cookieIsValid)")
-}
-	
