@@ -12,6 +12,14 @@ class ViewController: UIViewController {
                             
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		
+		GenomeAuthenticator(presentingViewController: self).authenticate {
+			println("You are now authenticated!")
+			Ticket.getAllTickets {
+				tickets in
+				println("You should now have all tickets")
+			}
+		}
 		// Do any additional setup after loading the view, typically from a nib.
 	}
 
