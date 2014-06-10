@@ -16,6 +16,7 @@ struct TicketList {
 
 class Ticket {
 	var title:String, ticketID:Int, projectName:String
+	var isActive = false
 	
 	init (jsonModel: NSDictionary ) {
 		title = jsonModel["Title"] as String
@@ -54,17 +55,21 @@ class Ticket {
 
 func createOpenTicketList (fromTicketArray tickets: NSArray) -> TicketList {
 	let myTickets = tickets
+	
+	// find open tickets only
 	let openTickets : NSArray = myTickets.filteredArrayUsingPredicate(NSPredicate(format: "GroupName == 'OpenForMe'"))
+	
+	// get distinct project names of open tickets
 	let openTicketsProjects : NSArray = openTickets.valueForKeyPath("@distinctUnionOfObjects.ProjectName") as NSArray
 	
-	var ticketArray = Ticket[]()
-	for entry: AnyObject in openTickets {
-		let jsonDict = entry as NSDictionary
-		let ticket = Ticket(jsonModel: jsonDict)
-		println("Adding this to ticketArray: \(ticket.title)")
-		ticketArray.append(ticket)
+	// get a list of ticket objects
+	let ticketArray : Ticket[] = (openTickets as Array).map {
+		ticketDict in
+		let jsonDict = ticketDict as NSDictionary
+		return Ticket(jsonModel: jsonDict)
 	}
 	
+	// Get a list of tickets partitioned by their project name
 	var ticketsBySection = Dictionary<String, Ticket[]>()
 	for project : AnyObject in openTicketsProjects {
 		let projectName = project as String
@@ -72,9 +77,7 @@ func createOpenTicketList (fromTicketArray tickets: NSArray) -> TicketList {
 			ticketsBySection[projectName] = Ticket[]()
 		}
 		
-		ticketsBySection[projectName] = ticketArray.filter {
-			$0.projectName == projectName
-		}
+		ticketsBySection[projectName] = ticketArray.filter { $0.projectName == projectName }
 
 		for (key, value) in ticketsBySection {
 			println("\(key)")
@@ -83,9 +86,8 @@ func createOpenTicketList (fromTicketArray tickets: NSArray) -> TicketList {
 			}
 		}
 	}
-	
-	
-	return TicketList(activeTicket: nil, ticketsBySection: nil)
+
+	return TicketList(activeTicket: nil, ticketsBySection: ticketsBySection)
 	
 }
 
