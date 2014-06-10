@@ -2,10 +2,25 @@
 
 import Foundation
 
-var results : Array<Int> = [1,2,3]
+let nsd : NSDictionary = [
+	"a":"aaaa",
+	"b":42,
+	"GroupName":"OpenForMe"
+]
 
-results.map{
-	num -> Int in
-	
-	return num+1
-}
+let nsd2 : NSDictionary = [
+	"a":"asdf",
+	"b":23,
+	"GroupName":"OpenFromMe"
+]
+
+let nsa : NSArray = [nsd2, nsd2, nsd]
+
+nsd
+nsd as Dictionary
+nsa.valueForKey("a")
+let n = nsa as AnyObject[]
+
+
+let openTicketsP : NSArray = nsa.filteredArrayUsingPredicate(NSPredicate(format: "SELF.GroupName == 'OpenForMe'"))
+openTicketsP

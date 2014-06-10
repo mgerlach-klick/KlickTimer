@@ -15,15 +15,15 @@ struct TicketList {
 }
 
 class Ticket {
-	var title:String?, ticketID:Int?, projectName:String?
+	var title:String, ticketID:Int, projectName:String
 	
 	init (jsonModel: NSDictionary ) {
-		title = jsonModel["Title"] as String!
-		ticketID = jsonModel["TicketID"] as Int!
-		projectName = jsonModel["ProjectName"] as String!
+		title = jsonModel["Title"] as String
+		ticketID = jsonModel["TicketID"] as Int
+		projectName = jsonModel["ProjectName"] as String
 	}
 	
-	class func getAllTickets (completionBlock : (Array<NSDictionary>) -> Void){
+	class func getAllTickets (completionBlock : (NSArray) -> Void){
 		let ticketURL = "http://genome.klick.com:80/api/Ticket.json?ForGrid=true"
 		
 		let session = NSURLSession.sharedSession()
@@ -43,38 +43,45 @@ class Ticket {
 			}
 			*/
 			
-			let results = entries as Array
+//			let results = entries as Array
 			
-			completionBlock(results as Array)
+			completionBlock(entries as NSArray)
 		})
 		
 		ticketDataTask.resume()
 	}
 }
 
-func createOpenTicketList (fromTicketArray tickets: Array<NSDictionary>) -> TicketList {
-	let openProjects : NSArray = (tickets as Array).filter { $0["GroupName"] as String == "OpenForMe" }
-	let projectNames : Array = openProjects.valueForKeyPath("@distinctUnionOfObjects.ProjectName") as NSArray as Array
-	var ticketsBySection: Dictionary = Dictionary<String, Ticket[]>()
+func createOpenTicketList (fromTicketArray tickets: NSArray) -> TicketList {
+	let myTickets = tickets
+	let openTickets : NSArray = myTickets.filteredArrayUsingPredicate(NSPredicate(format: "GroupName == 'OpenForMe'"))
+	let openTicketsProjects : NSArray = openTickets.valueForKeyPath("@distinctUnionOfObjects.ProjectName") as NSArray
 	
-	let ticketArray : Array = tickets.map {
-		entry -> Ticket in
+	var ticketArray = Ticket[]()
+	for entry: AnyObject in openTickets {
 		let jsonDict = entry as NSDictionary
-		let ticket = Ticket(jsonModel: jsonDict as NSDictionary)
-		return ticket
+		let ticket = Ticket(jsonModel: jsonDict)
+		println("Adding this to ticketArray: \(ticket.title)")
+		ticketArray.append(ticket)
 	}
 	
-	for project : AnyObject in openProjects {
+	var ticketsBySection = Dictionary<String, Ticket[]>()
+	for project : AnyObject in openTicketsProjects {
 		let projectName = project as String
-//		if ticketsBySection[projectName] == nil{
-//			ticketsBySection[projectName] = Array()
-//		}
-		
-		ticketsBySection[projectName] = ticketArray.filter {
-			ticket in
-			return ticket.projectName == projectName
+		if ticketsBySection[projectName] == nil {
+			ticketsBySection[projectName] = Ticket[]()
 		}
 		
+		ticketsBySection[projectName] = ticketArray.filter {
+			$0.projectName == projectName
+		}
+
+		for (key, value) in ticketsBySection {
+			println("\(key)")
+			for v in value {
+				println("- \(v.title)")
+			}
+		}
 	}
 	
 	
