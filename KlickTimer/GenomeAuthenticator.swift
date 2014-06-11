@@ -44,7 +44,7 @@ class GenomeAuthenticator : UIViewController, UIWebViewDelegate {
 
 	}
 	
-	func testCookieValidity(callback: (Bool) -> Void) -> Void {
+	func testCookieValidity(callback:(Bool)->Void) {
 		let session = NSURLSession.sharedSession()
 		
 		let dataTask = session.dataTaskWithURL(NSURL.URLWithString(kConnectionTestURL), completionHandler: {

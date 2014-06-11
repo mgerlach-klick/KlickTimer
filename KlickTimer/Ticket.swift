@@ -14,6 +14,7 @@ struct TicketList {
 	var ticketsBySection: Dictionary<String, Ticket[]>?
 }
 
+
 class Ticket {
 	var title:String, ticketID:Int, projectName:String
 	var isActive = false
@@ -24,9 +25,8 @@ class Ticket {
 		projectName = jsonModel["ProjectName"] as String
 	}
 	
-	class func getAllTickets (completionBlock : (NSArray) -> Void){
+	class func getAllTickets (completionBlock : (NSArray) -> Void) {
 		let ticketURL = "http://genome.klick.com:80/api/Ticket.json?ForGrid=true"
-		
 		let session = NSURLSession.sharedSession()
 		
 		let ticketDataTask = session.dataTaskWithURL(NSURL.URLWithString(ticketURL), completionHandler: {
@@ -36,16 +36,7 @@ class Ticket {
 			let jsonResult: NSDictionary = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil) as NSDictionary
 			
 			let entries: NSArray = jsonResult["Entries"] as NSArray
-			
-			/*
-			for entry : AnyObject in entries {
-				let ticket = entry as NSDictionary
-				
-			}
-			*/
-			
-//			let results = entries as Array
-			
+		
 			completionBlock(entries as NSArray)
 		})
 		
@@ -90,6 +81,7 @@ func createOpenTicketList (fromTicketArray tickets: NSArray) -> TicketList {
 	return TicketList(activeTicket: nil, ticketsBySection: ticketsBySection)
 	
 }
+
 
 
 
