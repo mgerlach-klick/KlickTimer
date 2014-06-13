@@ -8,6 +8,19 @@
 
 import UIKit
 
+class TicketCell : UITableViewCell {
+	@IBOutlet var ticketLabel : UILabel
+	
+	@IBOutlet var button : UIButton
+	
+	@IBAction func button(sender : AnyObject) {
+		println("Button pressed!")
+		self.button.backgroundColor = UIColor.redColor()
+		self.button.titleLabel.text = "PRESSED"
+	}
+	
+}
+
 class TicketListTableViewController: UITableViewController {
 	
 	var ticketList : TicketList?
@@ -81,15 +94,16 @@ class TicketListTableViewController: UITableViewController {
 	}
 
     override func tableView(tableView: UITableView?, cellForRowAtIndexPath indexPath: NSIndexPath?) -> UITableViewCell? {
-		let cell : UITableViewCell = tableView!.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as UITableViewCell
+		let cell : TicketCell = tableView!.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as TicketCell
 
 		// Configure the cell...
 		let sectionName = ticketSectionArray![indexPath!.section]
 		let section = ticketList!.ticketsBySection![sectionName]!
 		let ticket = section[indexPath!.row]
 		
-		cell.textLabel.text = ticket.title
-
+		cell.ticketLabel.text = ticket.title
+		cell.button.backgroundColor = UIColor.greenColor()
+		
         return cell
     }
 	

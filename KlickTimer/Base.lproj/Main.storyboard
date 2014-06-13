@@ -14,11 +14,47 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="Msz-QC-PpL">
+                            <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="Msz-QC-PpL" customClass="TicketCell" customModule="KlickTimer" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Msz-QC-PpL" id="1HT-xf-I0D">
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EtF-fR-Bok" userLabel="cell label">
+                                            <rect key="frame" x="20" y="0.0" width="342" height="43"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="knL-2P-vKi" userLabel="cell button">
+                                            <rect key="frame" x="370" y="0.0" width="110" height="43"/>
+                                            <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="90" id="LHA-kT-Rin"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="14"/>
+                                            <state key="normal" title="Track Time">
+                                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="button:" destination="Msz-QC-PpL" eventType="touchUpInside" id="HFP-Gw-6II"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="knL-2P-vKi" firstAttribute="leading" secondItem="EtF-fR-Bok" secondAttribute="trailing" constant="8" id="02x-Dt-x6j"/>
+                                        <constraint firstAttribute="trailing" secondItem="knL-2P-vKi" secondAttribute="trailing" id="1a9-jY-1Fq"/>
+                                        <constraint firstItem="knL-2P-vKi" firstAttribute="top" secondItem="1HT-xf-I0D" secondAttribute="top" id="6JP-6C-DvG"/>
+                                        <constraint firstItem="EtF-fR-Bok" firstAttribute="top" secondItem="1HT-xf-I0D" secondAttribute="top" id="7Ik-gv-omT"/>
+                                        <constraint firstAttribute="trailing" secondItem="knL-2P-vKi" secondAttribute="trailing" id="Yoc-Rp-LwW"/>
+                                        <constraint firstItem="EtF-fR-Bok" firstAttribute="leading" secondItem="1HT-xf-I0D" secondAttribute="leading" constant="20" id="jNQ-70-aB8"/>
+                                        <constraint firstAttribute="bottom" secondItem="knL-2P-vKi" secondAttribute="bottom" id="tHx-d5-w37"/>
+                                        <constraint firstAttribute="bottom" secondItem="EtF-fR-Bok" secondAttribute="bottom" id="wve-io-oUY"/>
+                                    </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="button" destination="knL-2P-vKi" id="Hfm-o2-99N"/>
+                                    <outlet property="ticketLabel" destination="EtF-fR-Bok" id="pQN-hJ-lx2"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -29,7 +65,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c4c-A1-JSl" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="103" y="-51"/>
+            <point key="canvasLocation" x="103" y="-54"/>
         </scene>
     </scenes>
 </document>
