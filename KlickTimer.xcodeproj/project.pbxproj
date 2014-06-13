@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C07F5EE194B433C00A66503 /* TicketListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C07F5ED194B433C00A66503 /* TicketListTableViewController.swift */; };
 		5CC86DBC1945E6BA000015ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC86DBB1945E6BA000015ED /* AppDelegate.swift */; };
-		5CC86DBE1945E6BA000015ED /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC86DBD1945E6BA000015ED /* ViewController.swift */; };
 		5CC86DC11945E6BA000015ED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CC86DBF1945E6BA000015ED /* Main.storyboard */; };
 		5CC86DC31945E6BA000015ED /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5CC86DC21945E6BA000015ED /* Images.xcassets */; };
 		5CC86DCF1945E6BA000015ED /* KlickTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC86DCE1945E6BA000015ED /* KlickTimerTests.swift */; };
@@ -35,10 +35,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5C07F5ED194B433C00A66503 /* TicketListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TicketListTableViewController.swift; sourceTree = "<group>"; };
 		5CC86DB61945E6BA000015ED /* KlickTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KlickTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CC86DBA1945E6BA000015ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5CC86DBB1945E6BA000015ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5CC86DBD1945E6BA000015ED /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5CC86DC01945E6BA000015ED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5CC86DC21945E6BA000015ED /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5CC86DC81945E6BA000015ED /* KlickTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KlickTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -92,7 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				5CC86DBB1945E6BA000015ED /* AppDelegate.swift */,
-				5CC86DBD1945E6BA000015ED /* ViewController.swift */,
+				5C07F5ED194B433C00A66503 /* TicketListTableViewController.swift */,
 				5CC86DBF1945E6BA000015ED /* Main.storyboard */,
 				5CC86DD91945E80B000015ED /* GenomeAuthenticator.m */,
 				5CC86DDB1945EA20000015ED /* GenomeAuthenticator.swift */,
@@ -237,7 +237,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CC86DBE1945E6BA000015ED /* ViewController.swift in Sources */,
+				5C07F5EE194B433C00A66503 /* TicketListTableViewController.swift in Sources */,
 				5CC86DBC1945E6BA000015ED /* AppDelegate.swift in Sources */,
 				5CDD073A194621CB004F8F80 /* Ticket.swift in Sources */,
 				5CC86DDC1945EA20000015ED /* GenomeAuthenticator.swift in Sources */,

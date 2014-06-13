@@ -16,3 +16,6 @@ maybeAName = "Steve"
 handleMaybeStr(maybeAName)
 
 maybeAName = 123
+
+Dictionary
+MapCollectionView
