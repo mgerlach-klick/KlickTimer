@@ -15,7 +15,20 @@ handleMaybeStr(maybeAName)
 maybeAName = "Steve"
 handleMaybeStr(maybeAName)
 
-maybeAName = 123
+struct TicketList {
+	static var activeTicket: String? {
+		willSet {
+			if let a = activeTicket {
+			println("Setting \(activeTicket) to \(newValue)")
+			} else {
+				println("Setting initial value to \(newValue)")
+			}
+	}
+	}
+}
 
-Dictionary
-MapCollectionView
+
+TicketList.activeTicket = "ASDF"
+
+let foo = TicketList()
+foo.activeTicket = "bla"

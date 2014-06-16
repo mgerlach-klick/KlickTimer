@@ -10,12 +10,18 @@ import Foundation
 import Swift
 
 struct TicketList {
-	var activeTicket: Ticket?
+	static var activeTicket: Ticket? {
+		willSet {
+			println("Setting new active ticket as \(newValue!.ticketID)")
+			if let t = activeTicket { t.isActive = false }
+			newValue!.isActive = true
+		}
+	}
 	var ticketsBySection: Dictionary<String, Ticket[]>?
 }
 
 
-class Ticket {
+class Ticket : Equatable {
 	var title:String, ticketID:Int, projectName:String
 	var isActive = false
 	
@@ -42,6 +48,10 @@ class Ticket {
 		
 		ticketDataTask.resume()
 	}
+}
+
+func == (lhs: Ticket, rhs: Ticket) -> Bool {
+	return lhs.ticketID == rhs.ticketID
 }
 
 func createOpenTicketList (fromTicketArray tickets: NSArray) -> TicketList {
@@ -78,7 +88,7 @@ func createOpenTicketList (fromTicketArray tickets: NSArray) -> TicketList {
 		}
 	}
 
-	return TicketList(activeTicket: nil, ticketsBySection: ticketsBySection)
+	return TicketList(ticketsBySection: ticketsBySection)
 	
 }
 

@@ -10,13 +10,13 @@ import UIKit
 
 class TicketCell : UITableViewCell {
 	@IBOutlet var ticketLabel : UILabel
-	
 	@IBOutlet var button : UIButton
+	weak var ticket: Ticket?
+	weak var tableView : UITableView?
 	
 	@IBAction func button(sender : AnyObject) {
-		println("Button pressed!")
-		self.button.backgroundColor = UIColor.redColor()
-		self.button.titleLabel.text = "PRESSED"
+		TicketList.activeTicket = ticket!
+		tableView!.reloadData()
 	}
 	
 }
@@ -101,8 +101,19 @@ class TicketListTableViewController: UITableViewController {
 		let section = ticketList!.ticketsBySection![sectionName]!
 		let ticket = section[indexPath!.row]
 		
+		if ticket == TicketList.activeTicket {
+			cell.button.backgroundColor = UIColor.redColor()
+			cell.button.setTitle("STOP", forState: .Normal)
+		} else {
+			cell.button.backgroundColor = UIColor.greenColor()
+			cell.button.setTitle("Track", forState: .Normal)
+
+		}
+		
 		cell.ticketLabel.text = ticket.title
-		cell.button.backgroundColor = UIColor.greenColor()
+
+		cell.tableView = tableView
+		cell.ticket = ticket
 		
         return cell
     }
