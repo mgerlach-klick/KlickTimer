@@ -49,28 +49,35 @@ class Ticket : Equatable {
 		ticketDataTask.resume()
 	}
 	
-	func startTracking () {
-		trackingRequest(true)
+	func startTracking (completionBlock : ()->Void) {
+		trackingRequest(true, completionBlock)
 	}
 	
-	func stopTracking () {
-		trackingRequest(false)
+	func stopTracking (completionBlock : ()->Void) {
+		trackingRequest(false, completionBlock)
 	}
 	
-	func trackingRequest (startTracking : Bool) {
+	func trackingRequest (startTracking : Bool, completionBlock : ()->Void) {
 		let ticketTrackingURL = "http://genome.klick.com:80/api/Ticket/Tracking?TicketID=\(ticketID)&StartTracking="+(startTracking ? "true" : "false")
+		println("tickettrackingurl: \(ticketTrackingURL)")
+		
 		let session = NSURLSession.sharedSession()
 		
 		let ticketDataTask = session.dataTaskWithURL(NSURL.URLWithString(ticketTrackingURL), completionHandler: {
 			data, urlresponse, error in
-			
+
 			let httpResp = urlresponse as NSHTTPURLResponse
-			let jsonResult: NSDictionary = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil) as NSDictionary
+
+			var error : NSError?
 			
-			println(startTracking)
-			println(httpResp)
-			println(data)
-			println(jsonResult)
+			var jsonResult: NSDictionary? = NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments, error: &error) as? NSDictionary
+
+			if jsonResult {
+				println(jsonResult)
+			} else if error {
+				println("JSON Error: \(error.description)")
+			}
+			
 			if httpResp.statusCode == 200 {//&& jsonResult.valueForKeyPath("Validation.IsValid") as String == "true" {
 				if startTracking {
 					TicketList.activeTicket = self
@@ -79,16 +86,18 @@ class Ticket : Equatable {
 				}
 			}
 			
+			completionBlock()
+			
 		})
 		
 		ticketDataTask.resume()
 	}
 	
-	func toggleTracking () {
+	func toggleTracking (completionBlock : ()->Void) {
 		if isActive {
-			stopTracking()
+			stopTracking(completionBlock)
 		} else {
-			startTracking()
+			startTracking(completionBlock)
 		}
 	}
 }
