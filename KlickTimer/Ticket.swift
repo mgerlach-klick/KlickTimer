@@ -12,9 +12,9 @@ import Swift
 struct TicketList {
 	static var activeTicket: Ticket? {
 		willSet {
-			println("Setting new active ticket as \(newValue!.ticketID)")
+			println("Setting new active ticket as \(newValue?.ticketID)")
 			if let t = activeTicket { t.isActive = false }
-			newValue!.isActive = true
+			if let n = newValue { n.isActive = true }
 		}
 	}
 	var ticketsBySection: Dictionary<String, Ticket[]>?
@@ -47,6 +47,49 @@ class Ticket : Equatable {
 		})
 		
 		ticketDataTask.resume()
+	}
+	
+	func startTracking () {
+		trackingRequest(true)
+	}
+	
+	func stopTracking () {
+		trackingRequest(false)
+	}
+	
+	func trackingRequest (startTracking : Bool) {
+		let ticketTrackingURL = "http://genome.klick.com:80/api/Ticket/Tracking?TicketID=\(ticketID)&StartTracking="+(startTracking ? "true" : "false")
+		let session = NSURLSession.sharedSession()
+		
+		let ticketDataTask = session.dataTaskWithURL(NSURL.URLWithString(ticketTrackingURL), completionHandler: {
+			data, urlresponse, error in
+			
+			let httpResp = urlresponse as NSHTTPURLResponse
+			let jsonResult: NSDictionary = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil) as NSDictionary
+			
+			println(startTracking)
+			println(httpResp)
+			println(data)
+			println(jsonResult)
+			if httpResp.statusCode == 200 {//&& jsonResult.valueForKeyPath("Validation.IsValid") as String == "true" {
+				if startTracking {
+					TicketList.activeTicket = self
+				} else {
+					TicketList.activeTicket = nil
+				}
+			}
+			
+		})
+		
+		ticketDataTask.resume()
+	}
+	
+	func toggleTracking () {
+		if isActive {
+			stopTracking()
+		} else {
+			startTracking()
+		}
 	}
 }
 

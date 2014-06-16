@@ -15,7 +15,8 @@ class TicketCell : UITableViewCell {
 	weak var tableView : UITableView?
 	
 	@IBAction func button(sender : AnyObject) {
-		TicketList.activeTicket = ticket!
+//		TicketList.activeTicket = ticket!
+		ticket!.toggleTracking()
 		tableView!.reloadData()
 	}
 	
