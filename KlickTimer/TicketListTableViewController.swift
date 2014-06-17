@@ -62,7 +62,9 @@ class TicketListTableViewController: UITableViewController {
 						self.refreshControl.endRefreshing()
 					}
 				}
-				
+			}
+			
+			TicketList.getActiveTicket {				
 			}
 		}
 	}

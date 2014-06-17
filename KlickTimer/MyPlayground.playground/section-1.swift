@@ -28,7 +28,6 @@ struct TicketList {
 }
 
 
-TicketList.activeTicket = "ASDF"
-
-let foo = TicketList()
-foo.activeTicket = "bla"
+var x: Bool? = false
+if x { "does this get evaluated?" }
+if x == true { "what about this? does this get evaluated?" }

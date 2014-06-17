@@ -18,6 +18,45 @@ struct TicketList {
 		}
 	}
 	var ticketsBySection: Dictionary<String, Ticket[]>?
+	
+	static func getActiveTicket (completionBlock: ()->() ){
+		let userURL = "http://genome.klick.com:80/api/User.json?CurrentUser=true"
+		let session = NSURLSession.sharedSession()
+		
+		let userActiveTicketDataTask = session.dataTaskWithURL(NSURL.URLWithString(userURL)) {
+			data, urlresponse, error in
+			
+			let httpResp = urlresponse as NSHTTPURLResponse
+			let jsonResult: NSDictionary = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil) as NSDictionary
+
+			println(jsonResult.valueForKeyPath("Entries"))
+			if let maybeActiveTicketArray : AnyObject = jsonResult.valueForKeyPath("Entries.TicketTracking_TicketID")  {
+				println(maybeActiveTicketArray)
+
+				if let activeTicketArray = maybeActiveTicketArray as? NSArray {
+					let t : AnyObject  = activeTicketArray.firstObject as AnyObject
+					if t as? Int {
+						println("INT!!!")
+					} else if t as? NSNull {
+						println("NSNULL!!!!")
+					}
+//					println("Active ticket: \(t)")
+//					//				activeTicket = t
+//					//				completionBlock()
+//				} else {
+//					println("No active tickets")
+				}
+			} else {
+				println("No active tickets")
+			}
+		
+			
+
+			
+		}
+		
+		userActiveTicketDataTask.resume()
+	}
 }
 
 
@@ -75,7 +114,6 @@ class Ticket : Equatable {
 			var error : NSError?
 			
 			var jsonResult: NSDictionary? = NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments, error: &error) as? NSDictionary
-
 			if jsonResult {
 				println(jsonResult)
 			} else if error {
