@@ -58,12 +58,16 @@ class Ticket : Equatable {
 	}
 	
 	func trackingRequest (startTracking : Bool, completionBlock : ()->Void) {
-		let ticketTrackingURL = "http://genome.klick.com:80/api/Ticket/Tracking?TicketID=\(ticketID)&StartTracking="+(startTracking ? "true" : "false")
-		println("tickettrackingurl: \(ticketTrackingURL)")
+		let ticketTrackingURL = "http://genome.klick.com:80/api/Ticket/Tracking"
+		let params = "TicketID=\(ticketID)&StartTracking="+(startTracking ? "true" : "false")
+		println("tickettrackingurl: \(ticketTrackingURL)\(params)")
 		
 		let session = NSURLSession.sharedSession()
+		var urlRequest = NSMutableURLRequest(URL: NSURL.URLWithString(ticketTrackingURL))
+		urlRequest.HTTPMethod = "POST"
+		urlRequest.HTTPBody = params.dataUsingEncoding(NSUTF8StringEncoding)
 		
-		let ticketDataTask = session.dataTaskWithURL(NSURL.URLWithString(ticketTrackingURL), completionHandler: {
+		let ticketDataTask = session.dataTaskWithRequest(urlRequest, completionHandler: {
 			data, urlresponse, error in
 
 			let httpResp = urlresponse as NSHTTPURLResponse
