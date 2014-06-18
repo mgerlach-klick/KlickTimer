@@ -26,7 +26,6 @@ class TicketCell : UITableViewCell {
 
 class TicketListTableViewController: UITableViewController {
 	
-	var ticketList : TicketList?
 	var ticketSectionArray : String[]?
 
 
@@ -47,24 +46,28 @@ class TicketListTableViewController: UITableViewController {
 			println("You are now authenticated!")
 			if self.refreshControl { self.refreshControl.attributedTitle = NSAttributedString(string: "Refreshing Ticket List") }
 			
-			Ticket.getAllTickets { tickets
-				in
-				
-				println("Got all tickets!")
-				self.ticketList = createOpenTicketList(fromTicketArray: tickets)
-				if let keys = self.ticketList!.ticketsBySection?.keys {
+			TicketList.refreshTicketList {
+				if let keys = TicketList.ticketsBySection?.keys {
 					self.ticketSectionArray = Array(keys) // as per https://developer.apple.com/library/prerelease/ios/documentation/General/Reference/SwiftStandardLibraryReference/Dictionary.html
 				}
 				
-				NSOperationQueue.mainQueue().addOperationWithBlock{() in
-					self.tableView.reloadData()
-					if self.refreshControl.refreshing {
-						self.refreshControl.endRefreshing()
-					}
+				self.reloadDataOnMainthread()
+
+				// we rely on a filled out ticket list for this, so we put this into the completion block
+				TicketList.getActiveTicket {
+					self.reloadDataOnMainthread()
 				}
+				
 			}
 			
-			TicketList.getActiveTicket {				
+		}
+	}
+	
+	func reloadDataOnMainthread () {
+		NSOperationQueue.mainQueue().addOperationWithBlock{() in
+			self.tableView.reloadData()
+			if self.refreshControl.refreshing {
+				self.refreshControl.endRefreshing()
 			}
 		}
 	}
@@ -84,7 +87,7 @@ class TicketListTableViewController: UITableViewController {
     override func tableView(tableView: UITableView?, numberOfRowsInSection section: Int) -> Int {
 		let sectionName = ticketSectionArray![section]
 		
-		if let numberOfRows = ticketList!.ticketsBySection![sectionName]?.count {
+		if let numberOfRows = TicketList.ticketsBySection![sectionName]?.count {
 			return numberOfRows
 		} else {
 			return 0
@@ -103,7 +106,7 @@ class TicketListTableViewController: UITableViewController {
 
 		// Configure the cell...
 		let sectionName = ticketSectionArray![indexPath!.section]
-		let section = ticketList!.ticketsBySection![sectionName]!
+		let section = TicketList.ticketsBySection![sectionName]!
 		let ticket = section[indexPath!.row]
 		
 		if ticket == TicketList.activeTicket {

@@ -10,6 +10,7 @@ import Foundation
 import Swift
 
 struct TicketList {
+	// Properties
 	static var activeTicket: Ticket? {
 		willSet {
 			println("Setting new active ticket as \(newValue?.ticketID)")
@@ -17,8 +18,10 @@ struct TicketList {
 			if let n = newValue { n.isActive = true }
 		}
 	}
-	var ticketsBySection: Dictionary<String, Ticket[]>?
 	
+	static var ticketsBySection: Dictionary<String, Ticket[]>?
+	
+	// Functions
 	static func getActiveTicket (completionBlock: ()->() ){
 		let userURL = "http://genome.klick.com:80/api/User.json?CurrentUser=true"
 		let session = NSURLSession.sharedSession()
@@ -29,48 +32,44 @@ struct TicketList {
 			let httpResp = urlresponse as NSHTTPURLResponse
 			let jsonResult: NSDictionary = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil) as NSDictionary
 
-			println(jsonResult.valueForKeyPath("Entries"))
 			if let maybeActiveTicketArray : AnyObject = jsonResult.valueForKeyPath("Entries.TicketTracking_TicketID")  {
-				println(maybeActiveTicketArray)
-
 				if let activeTicketArray = maybeActiveTicketArray as? NSArray {
-					let t : AnyObject  = activeTicketArray.firstObject as AnyObject
-					if t as? Int {
-						println("INT!!!")
-					} else if t as? NSNull {
-						println("NSNULL!!!!")
+					let activeTicketId : AnyObject  = activeTicketArray.firstObject as AnyObject
+					if activeTicketId as? Int {
+						let ticketWithThatID = self.ticketByID(activeTicketId as Int)
+						if ticketWithThatID {
+							self.activeTicket = ticketWithThatID!
+							println("The currently active ticket is \(activeTicketId as Int): \(self.activeTicket!.title)")
+							completionBlock()
+						}
+					} else if activeTicketId as? NSNull {
+						println("Currently no active ticket")
 					}
-//					println("Active ticket: \(t)")
-//					//				activeTicket = t
-//					//				completionBlock()
-//				} else {
-//					println("No active tickets")
 				}
-			} else {
-				println("No active tickets")
 			}
-		
-			
-
-			
 		}
 		
 		userActiveTicketDataTask.resume()
 	}
-}
-
-
-class Ticket : Equatable {
-	var title:String, ticketID:Int, projectName:String
-	var isActive = false
 	
-	init (jsonModel: NSDictionary ) {
-		title = jsonModel["Title"] as String
-		ticketID = jsonModel["TicketID"] as Int
-		projectName = jsonModel["ProjectName"] as String
+	static func ticketByID(id : Int) -> Ticket? {
+		if ticketsBySection {
+			for array in ticketsBySection!.values {
+				for ticket in array {
+					if ticket.ticketID == id {
+						return ticket
+					}
+				}
+			}
+		}
+		
+		return .None
 	}
 	
-	class func getAllTickets (completionBlock : (NSArray) -> Void) {
+
+	
+	
+	static func getAllTickets (completionBlock : (NSArray) -> Void) {
 		let ticketURL = "http://genome.klick.com:80/api/Ticket.json?ForGrid=true"
 		let session = NSURLSession.sharedSession()
 		
@@ -81,11 +80,77 @@ class Ticket : Equatable {
 			let jsonResult: NSDictionary = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil) as NSDictionary
 			
 			let entries: NSArray = jsonResult["Entries"] as NSArray
-		
+			
 			completionBlock(entries as NSArray)
-		})
+			})
 		
 		ticketDataTask.resume()
+	}
+	
+	
+	static func createOpenTicketList (fromTicketArray tickets: NSArray) {
+		let myTickets = tickets
+		
+		// find open tickets only
+		let openTickets : NSArray = myTickets.filteredArrayUsingPredicate(NSPredicate(format: "GroupName == 'OpenForMe'"))
+		
+		// get distinct project names of open tickets
+		let openTicketsProjects : NSArray = openTickets.valueForKeyPath("@distinctUnionOfObjects.ProjectName") as NSArray
+		
+		// get a list of ticket objects
+		let ticketArray : Ticket[] = (openTickets as Array).map {
+			ticketDict in
+			let jsonDict = ticketDict as NSDictionary
+			return Ticket(jsonModel: jsonDict)
+		}
+		
+		// Get a list of tickets partitioned by their project name
+		var ticketsBySection = Dictionary<String, Ticket[]>()
+		for project : AnyObject in openTicketsProjects {
+			let projectName = project as String
+			if ticketsBySection[projectName] == nil {
+				ticketsBySection[projectName] = Ticket[]()
+			}
+			
+			ticketsBySection[projectName] = ticketArray.filter { $0.projectName == projectName }
+			
+			/*
+			for (key, value) in ticketsBySection {
+				println("\(key)")
+				for v in value {
+					println("- \(v.title)")
+				}
+			}
+			*/
+		}
+		
+		self.ticketsBySection = ticketsBySection
+	}
+	
+	
+	static func refreshTicketList (completionBlock : () -> Void) {
+		getAllTickets {
+			println("Got all tickets!")
+			self.createOpenTicketList(fromTicketArray: $0)
+			completionBlock()
+		}
+	}
+
+
+}
+
+
+
+
+
+class Ticket : Equatable {
+	var title:String, ticketID:Int, projectName:String
+	var isActive = false
+	
+	init (jsonModel: NSDictionary ) {
+		title = jsonModel["Title"] as String
+		ticketID = jsonModel["TicketID"] as Int
+		projectName = jsonModel["ProjectName"] as String
 	}
 	
 	func startTracking (completionBlock : ()->Void) {
@@ -148,43 +213,7 @@ func == (lhs: Ticket, rhs: Ticket) -> Bool {
 	return lhs.ticketID == rhs.ticketID
 }
 
-func createOpenTicketList (fromTicketArray tickets: NSArray) -> TicketList {
-	let myTickets = tickets
-	
-	// find open tickets only
-	let openTickets : NSArray = myTickets.filteredArrayUsingPredicate(NSPredicate(format: "GroupName == 'OpenForMe'"))
-	
-	// get distinct project names of open tickets
-	let openTicketsProjects : NSArray = openTickets.valueForKeyPath("@distinctUnionOfObjects.ProjectName") as NSArray
-	
-	// get a list of ticket objects
-	let ticketArray : Ticket[] = (openTickets as Array).map {
-		ticketDict in
-		let jsonDict = ticketDict as NSDictionary
-		return Ticket(jsonModel: jsonDict)
-	}
-	
-	// Get a list of tickets partitioned by their project name
-	var ticketsBySection = Dictionary<String, Ticket[]>()
-	for project : AnyObject in openTicketsProjects {
-		let projectName = project as String
-		if ticketsBySection[projectName] == nil {
-			ticketsBySection[projectName] = Ticket[]()
-		}
-		
-		ticketsBySection[projectName] = ticketArray.filter { $0.projectName == projectName }
 
-		for (key, value) in ticketsBySection {
-			println("\(key)")
-			for v in value {
-				println("- \(v.title)")
-			}
-		}
-	}
-
-	return TicketList(ticketsBySection: ticketsBySection)
-	
-}
 
 
 
@@ -217,3 +246,45 @@ println(r)
 "TicketStatusName": "open"
 },
 */
+
+
+extension Array {
+	func each(fn: (T) -> ()) {
+		for i in self {
+			fn(i)
+		}
+	}
+	
+	func find(fn: (T) -> Bool) -> T[] {
+		var to = T[]()
+		for x in self {
+			let t = x as T
+			if fn(t) {
+				to += t
+				
+			}
+		}
+		return to
+	}
+	
+	func find(fn: (T, Int) -> Bool) -> T[] {
+		var to = T[]()
+		var i = 0
+		for x in self {
+			let t = x as T
+			if fn(t, i++) {
+				to += t
+			}
+		}
+		return to
+	}
+	
+	func firstWhere(fn: (T) -> Bool) -> T? {
+		for x in self {
+			if fn(x) {
+				return x
+			}
+		}
+		return nil
+	}
+}

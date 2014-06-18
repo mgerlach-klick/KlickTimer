@@ -31,3 +31,9 @@ struct TicketList {
 var x: Bool? = false
 if x { "does this get evaluated?" }
 if x == true { "what about this? does this get evaluated?" }
+
+
+let numbers = [ 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 ]
+
+numbers.map(transform: Int -> U)
+
